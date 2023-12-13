@@ -12,8 +12,9 @@ function TimeTracker() {
   const [caseName, setCaseName] = useState("");
   const [activity, setActivity] = useState("");
   const [authCode, setAuthCode] = useState("");
+  const [desiredDate, setDesiredDate] = useState("");
 
-  const getTodaysSheetFromS3 = async () => {
+  const getSheetFromS3 = async (date) => {
     const AccessKeyId = process.env.REACT_APP_ACCESS_KEY_ID,
       SecretKey = process.env.REACT_APP_SECRET_KEY;
 
@@ -23,11 +24,19 @@ function TimeTracker() {
     };
 
     const client = new S3Client({ region: "us-east-2", credentials });
-
-    const todaysTimesheetKey = `${new Date().getMonth()}${new Date().getDate()}${new Date().getFullYear()}_SPO.csv`;
+    const today = new Date();
+    let timesheetKey = `${
+      today.getMonth() + 1
+    }${today.getDate()}${today.getFullYear()}_SPO.csv`;
+    if (date) {
+      console.log(date);
+      const dateParts = date.split("-");
+      timesheetKey = `${dateParts[1]}${dateParts[2]}${dateParts[0]}_SPO.csv`;
+    }
+    console.log(timesheetKey);
     const getCommand = new GetObjectCommand({
       Bucket: "timesheets-delta-omega",
-      Key: todaysTimesheetKey,
+      Key: timesheetKey,
     });
 
     try {
@@ -77,15 +86,18 @@ function TimeTracker() {
       Body: newTimesheet,
     });
 
-    try {
-      const putResponse = await client.send(putCommand);
-      console.log(putResponse);
-    } catch (err) {
-      console.error(err);
-    }
+    // try {
+    //   const putResponse = await client.send(putCommand);
+    //   console.log(putResponse);
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
 
-  const downloadTimesheet = () => {
+  const downloadTimesheet = async (date) => {
+    if (date) {
+      await getSheetFromS3(date);
+    }
     // to download
     let csvContentForDownload = "data:text/csv;charset=utf-8,";
     csvContentForDownload += todaysTimesheet;
@@ -95,9 +107,7 @@ function TimeTracker() {
 
   return (
     <div className="container">
-      <button onClick={() => getTodaysSheetFromS3()}>
-        Get Today's Timesheet
-      </button>
+      <button onClick={() => getSheetFromS3()}>Get Today's Timesheet</button>
 
       <form>
         <label>
@@ -144,6 +154,17 @@ function TimeTracker() {
       <button onClick={() => sendFileToS3()}>Submit</button>
       <button onClick={() => downloadTimesheet()}>
         Download what I think the current timesheet is
+      </button>
+      <label>
+        Desired date:
+        <input
+          type="date"
+          name="Desired date"
+          onChange={(e) => setDesiredDate(e.target.value)}
+        />
+      </label>
+      <button onClick={() => downloadTimesheet(desiredDate)}>
+        Download timesheet for preceding date
       </button>
     </div>
   );
