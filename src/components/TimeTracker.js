@@ -37,10 +37,10 @@ function TimeTracker() {
       const str = await getResponse.Body.transformToString();
       console.log(44, str);
       setTodaysTimesheet(str);
-      console.warn("Timesheet loaded successfully");
+      console.alert("Timesheet loaded successfully");
     } catch (e) {
       console.log(e);
-      console.warn("No timesheet found, starting new sheet for the day");
+      console.alert("No timesheet found, starting new sheet for the day");
       const header = ["start_time", "end_time", "case_name", "activity"];
       const csvHeader = header.join(",");
       setTodaysTimesheet(csvHeader);
@@ -61,9 +61,11 @@ function TimeTracker() {
     const todaysTimesheetKey = `${new Date().getMonth()}${new Date().getDate()}${new Date().getFullYear()}_SPO.csv`;
 
     if (authCode !== "SPO") {
+      window.alert("UNAUTHORIZED");
       throw new Error("UNAUTHORIZED, UNACCEPTABLE");
     }
     if (!startTime || !endTime || !caseName || !activity) {
+      window.alert("MISSING DATA");
       throw new Error("MISSING DATA, UNACCEPTABLE");
     }
 
