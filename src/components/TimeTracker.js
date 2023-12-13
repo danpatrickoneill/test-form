@@ -37,10 +37,10 @@ function TimeTracker() {
       const str = await getResponse.Body.transformToString();
       console.log(44, str);
       setTodaysTimesheet(str);
-      console.alert("Timesheet loaded successfully");
+      console.log("Timesheet loaded successfully");
     } catch (e) {
       console.log(e);
-      console.alert("No timesheet found, starting new sheet for the day");
+      console.log("No timesheet found, starting new sheet for the day");
       const header = ["start_time", "end_time", "case_name", "activity"];
       const csvHeader = header.join(",");
       setTodaysTimesheet(csvHeader);
@@ -108,7 +108,7 @@ function TimeTracker() {
         <label>
           Start time:
           <input
-            type="text"
+            type="time"
             name="Start time"
             onChange={(e) => setStartTime(e.target.value)}
           />
@@ -116,7 +116,7 @@ function TimeTracker() {
         <label>
           End time:
           <input
-            type="text"
+            type="time"
             name="End time"
             onChange={(e) => setEndTime(e.target.value)}
           />
