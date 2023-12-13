@@ -6,14 +6,14 @@ import {
 } from "@aws-sdk/client-s3";
 
 const sendFileToS3 = async () => {
-  const AccessKeyId = process.env.ACCESS_KEY_ID,
-    SecretKey = process.env.SECRET_KEY;
+  const AccessKeyId = process.env.REACT_APP_ACCESS_KEY_ID,
+    SecretKey = process.env.REACT_APP_SECRET_KEY;
 
   const credentials = {
     accessKeyId: AccessKeyId,
     secretAccessKey: SecretKey,
   };
-  // console.log(15, process, process.e credentials);
+
   const client = new S3Client({ region: "us-east-2", credentials });
 
   const todaysTimesheetKey = `${new Date().getMonth()}${new Date().getDate()}${new Date().getFullYear()}_SPO.csv`;
