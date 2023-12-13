@@ -1,6 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
 import {
   GetObjectCommand,
@@ -16,8 +14,6 @@ const credentials = {
 };
 
 const client = new S3Client({region: 'us-east-2', credentials});
-
-const generateFile = () => {};
 
 const sendFileToS3 = async () => {
   const todaysTimesheetKey = `${new Date().getMonth()}${new Date().getDate()}${new Date().getFullYear()}_SPO.csv`;
@@ -37,7 +33,6 @@ const sendFileToS3 = async () => {
     console.error(err);
   }
   // if file, append to file; else generate fresh for today
-  const content = 'Some content!';
   let csvCopy = await response?.Body?.transformToString();
   let csvContent = 'data:text/csv;charset=utf-8,';
   if (false) {
