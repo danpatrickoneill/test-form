@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   GetObjectCommand,
   PutObjectCommand,
@@ -36,10 +36,10 @@ function TimeTracker() {
       const str = await getResponse.Body.transformToString();
       console.log(44, str);
       setTodaysTimesheet(str);
-      console.warn('Timesheet loaded successfully')
+      console.warn("Timesheet loaded successfully");
     } catch (e) {
       console.log(e);
-      console.warn('No timesheet found, starting new sheet for the day')
+      console.warn("No timesheet found, starting new sheet for the day");
       const header = ["start_time", "end_time", "case_number"];
       const csvHeader = header.join(",");
       setTodaysTimesheet(csvHeader);
@@ -59,6 +59,9 @@ function TimeTracker() {
 
     const todaysTimesheetKey = `${new Date().getMonth()}${new Date().getDate()}${new Date().getFullYear()}_SPO.csv`;
 
+    if (authCode !== "SPO") {
+      throw new Error("UNAUTHORIZED, UNACCEPTABLE");
+    }
     if (!startTime || !endTime || !caseNumber) {
       throw new Error("MISSING DATA, UNACCEPTABLE");
     }
