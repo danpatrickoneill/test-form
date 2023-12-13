@@ -86,12 +86,12 @@ function TimeTracker() {
       Body: newTimesheet,
     });
 
-    // try {
-    //   const putResponse = await client.send(putCommand);
-    //   console.log(putResponse);
-    // } catch (err) {
-    //   console.error(err);
-    // }
+    try {
+      const putResponse = await client.send(putCommand);
+      console.log(putResponse);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const downloadTimesheet = async (date) => {
