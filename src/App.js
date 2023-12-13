@@ -7,8 +7,8 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-const AccessKeyId = 'AKIA5FWX7DSAJU522RFE',
-      SecretKey = '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'
+const AccessKeyId = process.env.ACCESS_KEY_ID,
+      SecretKey = process.env.SECRET_KEY
 
 const credentials = {
     accessKeyId: AccessKeyId,
