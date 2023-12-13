@@ -46,6 +46,7 @@ function TimeTracker() {
       console.log(44, str);
       setTodaysTimesheet(str);
       console.log("Timesheet loaded successfully");
+      return str;
     } catch (e) {
       console.log(e);
       console.log("No timesheet found, starting new sheet for the day");
@@ -66,7 +67,10 @@ function TimeTracker() {
 
     const client = new S3Client({ region: "us-east-2", credentials });
 
-    const todaysTimesheetKey = `${new Date().getMonth()}${new Date().getDate()}${new Date().getFullYear()}_SPO.csv`;
+    const today = new Date();
+    const todaysTimesheetKey = `${
+      today.getMonth() + 1
+    }${today.getDate()}${today.getFullYear()}_SPO.csv`;
 
     if (authCode !== "SPO") {
       window.alert("UNAUTHORIZED");
@@ -95,12 +99,12 @@ function TimeTracker() {
   };
 
   const downloadTimesheet = async (date) => {
+    let sheet;
     if (date) {
-      await getSheetFromS3(date);
+      sheet = getSheetFromS3(date);
     }
-    // to download
     let csvContentForDownload = "data:text/csv;charset=utf-8,";
-    csvContentForDownload += todaysTimesheet;
+    csvContentForDownload += sheet;
     var encodedUri = encodeURI(csvContentForDownload);
     window.open(encodedUri);
   };
