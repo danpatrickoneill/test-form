@@ -25,7 +25,6 @@ function TimeTracker() {
     const client = new S3Client({ region: "us-east-2", credentials });
 
     const todaysTimesheetKey = `${new Date().getMonth()}${new Date().getDate()}${new Date().getFullYear()}_SPO.csv`;
-    console.log(14, todaysTimesheetKey);
     const getCommand = new GetObjectCommand({
       Bucket: "timesheets-delta-omega",
       Key: todaysTimesheetKey,
@@ -70,11 +69,8 @@ function TimeTracker() {
     }
 
     const newData = [startTime, endTime, caseName, activity];
-    console.log(newData);
     const row = newData.join(",");
-    console.log(row);
     const newTimesheet = todaysTimesheet + `\n${row}`;
-    console.log(newTimesheet);
     const putCommand = new PutObjectCommand({
       Bucket: "timesheets-delta-omega",
       Key: todaysTimesheetKey,
@@ -97,7 +93,6 @@ function TimeTracker() {
     window.open(encodedUri);
   };
 
-  console.log(startTime);
   return (
     <div className="container">
       <button onClick={() => getTodaysSheetFromS3()}>
