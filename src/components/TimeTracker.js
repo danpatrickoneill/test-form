@@ -9,7 +9,8 @@ function TimeTracker() {
   const [todaysTimesheet, setTodaysTimesheet] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [caseNumber, setCaseNumber] = useState("");
+  const [caseName, setCaseName] = useState("");
+  const [activity, setActivity] = useState("");
   const [authCode, setAuthCode] = useState("");
 
   const getTodaysSheetFromS3 = async () => {
@@ -40,7 +41,7 @@ function TimeTracker() {
     } catch (e) {
       console.log(e);
       console.warn("No timesheet found, starting new sheet for the day");
-      const header = ["start_time", "end_time", "case_number"];
+      const header = ["start_time", "end_time", "case_name", "activity"];
       const csvHeader = header.join(",");
       setTodaysTimesheet(csvHeader);
     }
@@ -62,11 +63,11 @@ function TimeTracker() {
     if (authCode !== "SPO") {
       throw new Error("UNAUTHORIZED, UNACCEPTABLE");
     }
-    if (!startTime || !endTime || !caseNumber) {
+    if (!startTime || !endTime || !caseName || !activity) {
       throw new Error("MISSING DATA, UNACCEPTABLE");
     }
 
-    const newData = [startTime, endTime, caseNumber];
+    const newData = [startTime, endTime, caseName, activity];
     console.log(newData);
     const row = newData.join(",");
     console.log(row);
@@ -119,11 +120,19 @@ function TimeTracker() {
           />
         </label>
         <label>
-          Case number:
+          Case name:
           <input
             type="text"
-            name="Case number"
-            onChange={(e) => setCaseNumber(e.target.value)}
+            name="Case name"
+            onChange={(e) => setCaseName(e.target.value)}
+          />
+        </label>
+        <label>
+          Activity:
+          <input
+            type="text"
+            name="Activity"
+            onChange={(e) => setActivity(e.target.value)}
           />
         </label>
         <label>
