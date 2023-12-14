@@ -24,16 +24,11 @@ function TimeTracker() {
     };
 
     const client = new S3Client({ region: "us-east-2", credentials });
-    const today = new Date();
+    const dateForKey = date ? new Date(date) : new Date()
     let timesheetKey = `${
-      today.getMonth() + 1
-    }${today.getDate()}${today.getFullYear()}_SPO.csv`;
-    if (date) {
-      console.log(date);
-      const dateParts = date.split("-");
-      timesheetKey = `${dateParts[1]}${dateParts[2]}${dateParts[0]}_SPO.csv`;
-    }
-    console.log(timesheetKey);
+      dateForKey.getMonth() + 1
+    }${dateForKey.getDate()}${dateForKey.getFullYear()}_SPO.csv`;
+
     const getCommand = new GetObjectCommand({
       Bucket: "timesheets-delta-omega",
       Key: timesheetKey,
@@ -101,7 +96,7 @@ function TimeTracker() {
   const downloadTimesheet = async (date) => {
     let sheet;
     if (date) {
-      sheet = getSheetFromS3(date);
+      sheet = await getSheetFromS3(date);
     }
     let csvContentForDownload = "data:text/csv;charset=utf-8,";
     csvContentForDownload += sheet;
