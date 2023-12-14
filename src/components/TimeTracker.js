@@ -13,18 +13,18 @@ function TimeTracker() {
   const [activity, setActivity] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [desiredDate, setDesiredDate] = useState("");
-  // const [sheetSubmitted, setSheetSubmitted] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
 
-  // useEffect(
-  //   () => async () => {
-  //     if (startingUp || sheetSubmitted) {
-  //       const test = await fetchSheetFromS3(desiredDate);
-  //       console.log(test);
-  //     }
-  //     startingUp = false;
-  //   },
-  //   [desiredDate, sheetSubmitted]
-  // );
+  useEffect(
+    () => async () => {
+      if (isFetching) {
+        const test = await fetchSheetFromS3(desiredDate);
+        console.log(test);
+      }
+      setIsFetching(false);
+    },
+    []
+  );
 
   const AccessKeyId = process.env.REACT_APP_ACCESS_KEY_ID,
     SecretKey = process.env.REACT_APP_SECRET_KEY;
@@ -37,10 +37,12 @@ function TimeTracker() {
   const client = new S3Client({ region: "us-east-2", credentials });
 
   const fetchSheetFromS3 = async (dateString) => {
-    const dateForKey = dateString?.length ? new Date(dateString) : new Date();
-    let timesheetKey = `${dateForKey.getMonth() + 1}${
-      dateForKey.getDate() + 1
-    }${dateForKey.getFullYear()}_SPO.csv`;
+    const dateForKey = dateString?.length
+      ? new Date(`${dateString} 12:00`)
+      : new Date();
+    let timesheetKey = `${
+      dateForKey.getMonth() + 1
+    }${dateForKey.getDate()}${dateForKey.getFullYear()}_SPO.csv`;
 
     const getCommand = new GetObjectCommand({
       Bucket: "timesheets-delta-omega",
@@ -102,18 +104,20 @@ function TimeTracker() {
     }
   };
 
-  const downloadTimesheet = async (date) => {
-    let sheet;
+  const fetchSheetForDate = async (date) => {
     if (date) {
-      console.log(date);
-      sheet = await fetchSheetFromS3(date);
+      await fetchSheetFromS3(date);
     }
-    if (!sheet) {
+  };
+
+  const downloadCurrentTimesheet = () => {
+    console.log(todaysTimesheet);
+    if (!todaysTimesheet.length) {
       return;
     }
     let csvContentForDownload = "data:text/csv;charset=utf-8,";
-    csvContentForDownload += sheet;
-    var encodedUri = encodeURI(csvContentForDownload);
+    csvContentForDownload += todaysTimesheet;
+    const encodedUri = encodeURI(csvContentForDownload);
     window.open(encodedUri);
   };
 
@@ -163,8 +167,8 @@ function TimeTracker() {
         </label>
       </form>
       <button onClick={() => sendFileToS3()}>Submit</button>
-      <button onClick={() => downloadTimesheet()}>
-        Download what I think the current timesheet is
+      <button onClick={() => downloadCurrentTimesheet()}>
+        Download today's timesheet
       </button>
       <label>
         Desired date:
@@ -174,8 +178,8 @@ function TimeTracker() {
           onChange={(e) => setDesiredDate(e.target.value)}
         />
       </label>
-      <button onClick={() => downloadTimesheet(desiredDate)}>
-        Download timesheet for preceding date
+      <button onClick={() => fetchSheetForDate(desiredDate)}>
+        Fetch timesheet for preceding date
       </button>
     </div>
   );
