@@ -36,6 +36,7 @@ function TimeTracker() {
     accessKeyId: AccessKeyId,
     secretAccessKey: SecretKey,
   };
+  
   const fetchSheetFromS3 = async (dateString) => {
     const dateForKey = dateString?.length
       ? new Date(`${dateString} 12:00`)
@@ -43,6 +44,11 @@ function TimeTracker() {
     let timesheetKey = `${
       dateForKey.getMonth() + 1
     }${dateForKey.getDate()}${dateForKey.getFullYear()}_SPO.csv`;
+
+    if (authCode !== "SPO") {
+      window.alert("UNAUTHORIZED");
+      return;
+    }
 
     const getCommand = new GetObjectCommand({
       Bucket: "timesheets-delta-omega",
@@ -91,6 +97,7 @@ function TimeTracker() {
     const newData = [startTime, endTime, caseName, activity];
     const row = newData.join(",");
     const newTimesheet = todaysTimesheet + `${row}\n`;
+
     const putCommand = new PutObjectCommand({
       Bucket: "timesheets-delta-omega",
       Key: todaysTimesheetKey,
@@ -102,7 +109,7 @@ function TimeTracker() {
     try {
       const putResponse = await client.send(putCommand);
       console.log(putResponse);
-      // setIsFetching(true);
+      setTodaysTimesheet(newTimesheet);
     } catch (err) {
       console.error(err);
     }
