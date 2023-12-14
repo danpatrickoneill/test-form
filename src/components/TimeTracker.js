@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   GetObjectCommand,
   PutObjectCommand,
@@ -13,21 +13,34 @@ function TimeTracker() {
   const [activity, setActivity] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [desiredDate, setDesiredDate] = useState("");
+  // const [sheetSubmitted, setSheetSubmitted] = useState(false);
 
-  const getSheetFromS3 = async (date) => {
-    const AccessKeyId = process.env.REACT_APP_ACCESS_KEY_ID,
-      SecretKey = process.env.REACT_APP_SECRET_KEY;
+  // useEffect(
+  //   () => async () => {
+  //     if (startingUp || sheetSubmitted) {
+  //       const test = await fetchSheetFromS3(desiredDate);
+  //       console.log(test);
+  //     }
+  //     startingUp = false;
+  //   },
+  //   [desiredDate, sheetSubmitted]
+  // );
 
-    const credentials = {
-      accessKeyId: AccessKeyId,
-      secretAccessKey: SecretKey,
-    };
+  const AccessKeyId = process.env.REACT_APP_ACCESS_KEY_ID,
+    SecretKey = process.env.REACT_APP_SECRET_KEY;
 
-    const client = new S3Client({ region: "us-east-2", credentials });
-    const dateForKey = date ? new Date(date) : new Date()
-    let timesheetKey = `${
-      dateForKey.getMonth() + 1
-    }${dateForKey.getDate()}${dateForKey.getFullYear()}_SPO.csv`;
+  const credentials = {
+    accessKeyId: AccessKeyId,
+    secretAccessKey: SecretKey,
+  };
+
+  const client = new S3Client({ region: "us-east-2", credentials });
+
+  const fetchSheetFromS3 = async (dateString) => {
+    const dateForKey = dateString?.length ? new Date(dateString) : new Date();
+    let timesheetKey = `${dateForKey.getMonth() + 1}${
+      dateForKey.getDate() + 1
+    }${dateForKey.getFullYear()}_SPO.csv`;
 
     const getCommand = new GetObjectCommand({
       Bucket: "timesheets-delta-omega",
@@ -36,32 +49,27 @@ function TimeTracker() {
 
     try {
       const getResponse = await client.send(getCommand);
-      // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
       const str = await getResponse.Body.transformToString();
-      console.log(44, str);
       setTodaysTimesheet(str);
       console.log("Timesheet loaded successfully");
       return str;
     } catch (e) {
       console.log(e);
-      console.log("No timesheet found, starting new sheet for the day");
-      const header = ["start_time", "end_time", "case_name", "activity"];
-      const csvHeader = header.join(",");
-      setTodaysTimesheet(csvHeader);
+      console.log("No timesheet found for date");
+      if (!dateString?.length) {
+        const header = ["start_time", "end_time", "case_name", "activity"];
+        const csvHeader = header.join(",");
+        setTodaysTimesheet(csvHeader);
+        return csvHeader;
+      } else {
+        console.log("No timesheet found for date");
+        window.alert("No timesheet found for date; please try another");
+        return;
+      }
     }
   };
 
   const sendFileToS3 = async () => {
-    const AccessKeyId = process.env.REACT_APP_ACCESS_KEY_ID,
-      SecretKey = process.env.REACT_APP_SECRET_KEY;
-
-    const credentials = {
-      accessKeyId: AccessKeyId,
-      secretAccessKey: SecretKey,
-    };
-
-    const client = new S3Client({ region: "us-east-2", credentials });
-
     const today = new Date();
     const todaysTimesheetKey = `${
       today.getMonth() + 1
@@ -69,11 +77,11 @@ function TimeTracker() {
 
     if (authCode !== "SPO") {
       window.alert("UNAUTHORIZED");
-      throw new Error("UNAUTHORIZED, UNACCEPTABLE");
+      return;
     }
     if (!startTime || !endTime || !caseName || !activity) {
       window.alert("MISSING DATA");
-      throw new Error("MISSING DATA, UNACCEPTABLE");
+      return;
     }
 
     const newData = [startTime, endTime, caseName, activity];
@@ -88,6 +96,7 @@ function TimeTracker() {
     try {
       const putResponse = await client.send(putCommand);
       console.log(putResponse);
+      // setSheetSubmitted(true);
     } catch (err) {
       console.error(err);
     }
@@ -96,7 +105,11 @@ function TimeTracker() {
   const downloadTimesheet = async (date) => {
     let sheet;
     if (date) {
-      sheet = await getSheetFromS3(date);
+      console.log(date);
+      sheet = await fetchSheetFromS3(date);
+    }
+    if (!sheet) {
+      return;
     }
     let csvContentForDownload = "data:text/csv;charset=utf-8,";
     csvContentForDownload += sheet;
@@ -106,8 +119,7 @@ function TimeTracker() {
 
   return (
     <div className="container">
-      <button onClick={() => getSheetFromS3()}>Get Today's Timesheet</button>
-
+      <button onClick={() => fetchSheetFromS3()}>Get Today's Timesheet</button>
       <form>
         <label>
           Start time:
@@ -142,10 +154,10 @@ function TimeTracker() {
           />
         </label>
         <label>
-          Auth code:
+          User initials:
           <input
             type="text"
-            name="Auth code"
+            name="User initials"
             onChange={(e) => setAuthCode(e.target.value)}
           />
         </label>
