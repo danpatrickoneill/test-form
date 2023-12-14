@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import "./index.css"
 
 function TimeTracker() {
   const [todaysTimesheet, setTodaysTimesheet] = useState("");
@@ -226,12 +227,16 @@ function TimeTracker() {
         {timesheetArray.map((row) => {
           console.log(row);
           return (
-            <>
-              <span>
-                {row[0]} {row[1]} {row[2]} {row[3]}
-              </span>
-              <br />
-            </>
+            <table>
+              <tbody>
+                <tr>
+                  <td>{row[0]}</td>
+                  <td>{row[1]}</td>
+                  <td>{row[2]}</td>
+                  <td>{row[3]}</td>
+                </tr>
+              </tbody>
+            </table>
           );
         })}
       </div>
