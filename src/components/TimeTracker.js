@@ -152,15 +152,6 @@ function TimeTracker() {
     return returnArray;
   };
 
-  const renderTimesheet = (timesheetArray) => {
-    // console.log(timesheetArray);
-    timesheetArray.map((row) => (
-      <span>
-        {row[0]} {row[1]}
-      </span>
-    ));
-  };
-
   const timesheetArray = getTimesheetArray();
   console.log(timesheetArray);
   return (
