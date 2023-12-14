@@ -59,24 +59,17 @@ function TimeTracker() {
       console.log("Timesheet loaded successfully");
       if (dateString.length) {
         setLoadedDate(dateString);
-      }
-      else {
-        setLoadedDate("Today")
+      } else {
+        setLoadedDate("Today");
       }
       return str;
     } catch (e) {
       console.log(e);
       console.log("No timesheet found for date");
-      if (!dateString?.length) {
-        const header = ["start_time", "end_time", "case_name", "activity"];
-        const csvHeader = header.join(",");
-        setTodaysTimesheet(csvHeader);
-        return csvHeader;
-      } else {
-        console.log("No timesheet found for date");
-        window.alert("No timesheet found for date; please try another");
-        return;
-      }
+      window.alert(
+        "No timesheet found for date; if you believe this is in error, contact the Danster"
+      );
+      return;
     }
   };
 
@@ -157,6 +150,7 @@ function TimeTracker() {
     return returnArray;
   };
 
+  const columns = ["Start Time", "End Time", "Case Name", "Activity"];
   const timesheetArray = getTimesheetArray();
   return (
     <div className="container">
@@ -219,8 +213,16 @@ function TimeTracker() {
         Fetch timesheet for preceding date
       </button>
       <div>
+        <table>
+          <thead>
+            <tr>
+              {columns.map((col) => (
+                <th>{col}</th>
+              ))}
+            </tr>
+          </thead>
+        </table>
         {timesheetArray.map((row) => {
-          console.log(row);
           return (
             <table>
               <tbody>
