@@ -35,9 +35,6 @@ function TimeTracker() {
     accessKeyId: AccessKeyId,
     secretAccessKey: SecretKey,
   };
-
-  const client = new S3Client({ region: "us-east-2", credentials });
-
   const fetchSheetFromS3 = async (dateString) => {
     const dateForKey = dateString?.length
       ? new Date(`${dateString} 12:00`)
@@ -50,6 +47,8 @@ function TimeTracker() {
       Bucket: "timesheets-delta-omega",
       Key: timesheetKey,
     });
+
+    const client = new S3Client({ region: "us-east-2", credentials });
 
     try {
       const getResponse = await client.send(getCommand);
@@ -100,10 +99,12 @@ function TimeTracker() {
       Body: newTimesheet,
     });
 
+    const client = new S3Client({ region: "us-east-2", credentials });
+
     try {
       const putResponse = await client.send(putCommand);
       console.log(putResponse);
-      // setSheetSubmitted(true);
+      // setIsFetching(true);
     } catch (err) {
       console.error(err);
     }
@@ -123,14 +124,44 @@ function TimeTracker() {
     let csvContentForDownload = "data:text/csv;charset=utf-8,";
     csvContentForDownload += todaysTimesheet;
     const dateToUse = loadedDate?.length
-    ? new Date(`${loadedDate} 12:00`)
-    : new Date();
+      ? new Date(`${loadedDate} 12:00`)
+      : new Date();
     csvContentForDownload += "\n";
     csvContentForDownload += dateToUse.toDateString();
     const encodedUri = encodeURI(csvContentForDownload);
     window.open(encodedUri);
   };
 
+  const getTimesheetArray = () => {
+    const rowLength = 4;
+
+    const elements2 = todaysTimesheet.split("\n");
+    // console.log(elements2);
+    const elements3 = elements2.join();
+    const elements = elements3.split(",");
+    // console.log(elements);
+    let a = 0;
+    let b = 4;
+    const returnArray = [];
+    while (b <= elements.length) {
+      returnArray.push(elements.slice(a, b));
+      a += rowLength;
+      b += rowLength;
+    }
+    return returnArray;
+  };
+
+  const renderTimesheet = (timesheetArray) => {
+    // console.log(timesheetArray);
+    timesheetArray.map((row) => (
+      <span>
+        {row[0]} {row[1]}
+      </span>
+    ));
+  };
+
+  const timesheetArray = getTimesheetArray();
+  console.log(timesheetArray);
   return (
     <div className="container">
       Currently loaded timesheet: {loadedDate || "Today"}
@@ -191,6 +222,19 @@ function TimeTracker() {
       <button onClick={() => fetchSheetForDate(desiredDate)}>
         Fetch timesheet for preceding date
       </button>
+      <div>
+        {timesheetArray.map((row) => {
+          console.log(row);
+          return (
+            <>
+              <span>
+                {row[0]} {row[1]} {row[2]} {row[3]}
+              </span>
+              <br />
+            </>
+          );
+        })}
+      </div>
     </div>
   );
 }
