@@ -4,7 +4,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import "./index.css"
+import "./index.css";
 
 function TimeTracker() {
   const [todaysTimesheet, setTodaysTimesheet] = useState("");
@@ -55,6 +55,7 @@ function TimeTracker() {
       const getResponse = await client.send(getCommand);
       const str = await getResponse.Body.transformToString();
       setTodaysTimesheet(str);
+      console.log(str);
       console.log("Timesheet loaded successfully");
       if (dateString.length) {
         setLoadedDate(dateString);
@@ -112,7 +113,7 @@ function TimeTracker() {
   };
 
   const fetchSheetForDate = async (date) => {
-      await fetchSheetFromS3(date);
+    await fetchSheetFromS3(date);
   };
 
   const downloadCurrentTimesheet = () => {
@@ -133,12 +134,13 @@ function TimeTracker() {
 
   const getTimesheetArray = () => {
     const rowLength = 4;
-
-    const elements2 = todaysTimesheet.split("\n");
-    // console.log(elements2);
-    const elements3 = elements2.join();
-    const elements = elements3.split(",");
-    // console.log(elements);
+    console.log(todaysTimesheet);
+    let elementsToSplit = todaysTimesheet;
+    if (todaysTimesheet.slice(todaysTimesheet.length).includes("\n")) {
+      elementsToSplit = todaysTimesheet.split("\n");
+      elementsToSplit = elementsToSplit.join();
+    }
+    const elements = elementsToSplit.split(",");
     let a = 0;
     let b = 4;
     const returnArray = [];
@@ -151,7 +153,6 @@ function TimeTracker() {
   };
 
   const timesheetArray = getTimesheetArray();
-  console.log(timesheetArray);
   return (
     <div className="container">
       Currently loaded timesheet: {loadedDate || "Today"}
