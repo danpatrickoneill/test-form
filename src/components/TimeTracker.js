@@ -112,9 +112,7 @@ function TimeTracker() {
   };
 
   const fetchSheetForDate = async (date) => {
-    if (date) {
       await fetchSheetFromS3(date);
-    }
   };
 
   const downloadCurrentTimesheet = () => {
