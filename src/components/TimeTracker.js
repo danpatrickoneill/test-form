@@ -13,6 +13,7 @@ function TimeTracker() {
   const [activity, setActivity] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [desiredDate, setDesiredDate] = useState("");
+  const [loadedDate, setLoadedDate] = useState("");
   const [isFetching, setIsFetching] = useState(true);
 
   useEffect(
@@ -54,6 +55,9 @@ function TimeTracker() {
       const str = await getResponse.Body.transformToString();
       setTodaysTimesheet(str);
       console.log("Timesheet loaded successfully");
+      if (dateString.length) {
+        setLoadedDate(dateString);
+      }
       return str;
     } catch (e) {
       console.log(e);
@@ -117,13 +121,18 @@ function TimeTracker() {
     }
     let csvContentForDownload = "data:text/csv;charset=utf-8,";
     csvContentForDownload += todaysTimesheet;
+    const dateToUse = loadedDate?.length
+    ? new Date(`${loadedDate} 12:00`)
+    : new Date();
+    csvContentForDownload += "\n";
+    csvContentForDownload += dateToUse.toDateString();
     const encodedUri = encodeURI(csvContentForDownload);
     window.open(encodedUri);
   };
 
   return (
     <div className="container">
-      <button onClick={() => fetchSheetFromS3()}>Get Today's Timesheet</button>
+      Currently loaded timesheet: {loadedDate || "Today"}
       <form>
         <label>
           Start time:
@@ -168,7 +177,7 @@ function TimeTracker() {
       </form>
       <button onClick={() => sendFileToS3()}>Submit</button>
       <button onClick={() => downloadCurrentTimesheet()}>
-        Download today's timesheet
+        Download currently loaded timesheet
       </button>
       <label>
         Desired date:
