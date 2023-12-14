@@ -175,10 +175,10 @@ function TimeTracker() {
           />
         </label>
       </form>
-      <button onClick={() => sendFileToS3()}>Submit</button>
       <button onClick={() => downloadCurrentTimesheet()}>
         Download currently loaded timesheet
       </button>
+      <button onClick={() => sendFileToS3()}>Submit new activity</button>
       <label>
         Desired date:
         <input
