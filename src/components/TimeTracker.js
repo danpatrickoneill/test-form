@@ -94,7 +94,7 @@ function TimeTracker() {
 
     const newData = [startTime, endTime, caseName, activity];
     const row = newData.join(",");
-    const newTimesheet = todaysTimesheet + `\n${row}`;
+    const newTimesheet = todaysTimesheet + `${row}\n`;
     const putCommand = new PutObjectCommand({
       Bucket: "timesheets-delta-omega",
       Key: todaysTimesheetKey,
@@ -136,11 +136,13 @@ function TimeTracker() {
     const rowLength = 4;
     console.log(todaysTimesheet);
     let elementsToSplit = todaysTimesheet;
-    if (todaysTimesheet.slice(todaysTimesheet.length).includes("\n")) {
+
+    if (todaysTimesheet.slice(1, todaysTimesheet.length).includes("\n")) {
       elementsToSplit = todaysTimesheet.split("\n");
       elementsToSplit = elementsToSplit.join();
     }
     const elements = elementsToSplit.split(",");
+
     let a = 0;
     let b = 4;
     const returnArray = [];
