@@ -14,7 +14,7 @@ function TimeTracker() {
   const [activity, setActivity] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [desiredDate, setDesiredDate] = useState("");
-  const [loadedDate, setLoadedDate] = useState("");
+  const [loadedDate, setLoadedDate] = useState("None");
   const [isFetching, setIsFetching] = useState(true);
 
   useEffect(
@@ -59,6 +59,9 @@ function TimeTracker() {
       console.log("Timesheet loaded successfully");
       if (dateString.length) {
         setLoadedDate(dateString);
+      }
+      else {
+        setLoadedDate("Today")
       }
       return str;
     } catch (e) {
