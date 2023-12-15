@@ -5,7 +5,10 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Web site created using create-react-app" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -22,6 +25,29 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script>
+      function randomNotification() {
+        const randomItem = Math.floor(Math.random() * games.length);
+        const notifTitle = games[randomItem].name;
+        const notifBody = `Created by ${games[randomItem].author}.`;
+        const notifImg = `data/img/${games[randomItem].slug}.jpg`;
+        const options = {
+          body: notifBody,
+          icon: notifImg,
+        };
+        new Notification(notifTitle, options);
+        setTimeout(randomNotification, 300000);
+      }
+
+      const button = document.getElementById("notifications");
+      button.addEventListener("click", () => {
+        Notification.requestPermission().then((result) => {
+          if (result === "granted") {
+            randomNotification();
+          }
+        });
+      });
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
