@@ -16,19 +16,19 @@ function TimeTracker() {
   const [authCode, setAuthCode] = useState("");
   const [desiredDate, setDesiredDate] = useState("");
   const [loadedDate, setLoadedDate] = useState("None");
-  const [isFetching, setIsFetching] = useState(true);
+  // const [isFetching, setIsFetching] = useState(true);
 
-  useEffect(
-    () => async () => {
-      if (isFetching) {
-        const test = await fetchSheetFromS3(desiredDate);
-        console.log(test);
-      }
-      setIsFetching(false);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  // useEffect(
+  //   () => async () => {
+  //     if (isFetching) {
+  //       const test = await fetchSheetFromS3(desiredDate);
+  //       console.log(test);
+  //     }
+  //     setIsFetching(false);
+  //   },
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   []
+  // );
 
   const AccessKeyId = process.env.REACT_APP_ACCESS_KEY_ID,
     SecretKey = process.env.REACT_APP_SECRET_KEY;

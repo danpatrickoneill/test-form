@@ -36,7 +36,8 @@ function TimeTable(props) {
 
   return (
     <TableContainer component={Paper} sx={{ maxWidth: "50%" }}>
-      <Table stickyHeader={date} size="small" aria-label="a dense table">
+      <h2>{date}</h2>
+      <Table size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
             {columns.map((col) => (
