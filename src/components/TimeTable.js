@@ -35,7 +35,15 @@ function TimeTable(props) {
   const timesheetArray = getTimesheetArray();
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: "50%" }}>
+    <TableContainer
+      component={Paper}
+      sx={{
+        maxWidth: {
+          sm: "80%", // theme.breakpoints.up('sm')
+          md: "50%", // theme.breakpoints.up('md')
+        },
+      }}
+    >
       <h2>{date}</h2>
       <Table size="small" aria-label="a dense table">
         <TableHead>
