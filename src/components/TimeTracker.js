@@ -136,8 +136,6 @@ function TimeTracker() {
     window.open(encodedUri);
   };
 
-  const columns = ["Start Time", "End Time", "Case Name", "Activity"];
-
   return (
     <div className="container">
       Currently loaded timesheet: {loadedDate || "Today"}

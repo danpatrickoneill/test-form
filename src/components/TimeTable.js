@@ -36,25 +36,25 @@ function TimeTable(props) {
 
   return (
     <TableContainer component={Paper} sx={{ maxWidth: "50%" }}>
-      <Table stickyHeader={date}size="small" aria-label="a dense table">
+      <Table stickyHeader={date} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
             {columns.map((col) => (
-                <TableCell>{col}</TableCell>
-              ))}
+              <TableCell>{col}</TableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
-        {timesheetArray.map((row) => {
-          return (
+          {timesheetArray.map((row) => {
+            return (
               <TableRow>
-                  <TableCell>{row[0]}</TableCell>
-                  <TableCell>{row[1]}</TableCell>
-                  <TableCell>{row[2]}</TableCell>
-                  <TableCell>{row[3]}</TableCell>
-                  </TableRow>
-          );
-        })}
+                <TableCell>{row[0]}</TableCell>
+                <TableCell>{row[1]}</TableCell>
+                <TableCell>{row[2]}</TableCell>
+                <TableCell>{row[3]}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </TableContainer>
