@@ -37,7 +37,7 @@ function TimeTracker() {
       // notificationBtn.style.display =
       //   Notification.permission === "granted" ? "none" : "block";
     }
-  
+
     // Let's check if the browser supports notifications
     if (!("Notification" in window)) {
       console.log("This browser does not support notifications.");
@@ -47,7 +47,7 @@ function TimeTracker() {
       });
     }
   }
-  
+
   function createNotification() {
     const n = new Notification("My Great Song");
     document.addEventListener("visibilitychange", () => {
@@ -57,7 +57,6 @@ function TimeTracker() {
       }
     });
   }
-  
 
   const AccessKeyId = process.env.REACT_APP_ACCESS_KEY_ID,
     SecretKey = process.env.REACT_APP_SECRET_KEY;
@@ -225,13 +224,13 @@ function TimeTracker() {
       <button onClick={() => fetchSheetForDate(desiredDate)}>
         Fetch timesheet for preceding date
       </button>
-        <TimeTable date={desiredDate} timesheet={todaysTimesheet} />
       <button id="enable" onClick={() => askNotificationPermission()}>
         Enable notifications
       </button>
       <button id="notify" onClick={() => createNotification()}>
         Get notification right now
       </button>
+      <TimeTable date={desiredDate} timesheet={todaysTimesheet} />
     </div>
   );
 }
