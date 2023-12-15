@@ -39,9 +39,10 @@ function TimeTable(props) {
       component={Paper}
       sx={{
         maxWidth: {
-          sm: "80%", // theme.breakpoints.up('sm')
+          xs: "90%", // theme.breakpoints.up('sm')
           md: "50%", // theme.breakpoints.up('md')
         },
+        mx: { xs: "auto" , sm: 0},
       }}
     >
       <h2>{date}</h2>
