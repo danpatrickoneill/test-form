@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import TimeTable from "./TimeTable.js";
 import "./index.css";
 
 function TimeTracker() {
@@ -36,7 +37,7 @@ function TimeTracker() {
     accessKeyId: AccessKeyId,
     secretAccessKey: SecretKey,
   };
-  
+
   const fetchSheetFromS3 = async (dateString) => {
     const dateForKey = dateString?.length
       ? new Date(`${dateString} 12:00`)
@@ -135,30 +136,8 @@ function TimeTracker() {
     window.open(encodedUri);
   };
 
-  const getTimesheetArray = () => {
-    const rowLength = 4;
-    console.log(todaysTimesheet);
-    let elementsToSplit = todaysTimesheet;
-
-    if (todaysTimesheet.slice(1, todaysTimesheet.length).includes("\n")) {
-      elementsToSplit = todaysTimesheet.split("\n");
-      elementsToSplit = elementsToSplit.join();
-    }
-    const elements = elementsToSplit.split(",");
-
-    let a = 0;
-    let b = 4;
-    const returnArray = [];
-    while (b <= elements.length) {
-      returnArray.push(elements.slice(a, b));
-      a += rowLength;
-      b += rowLength;
-    }
-    return returnArray;
-  };
-
   const columns = ["Start Time", "End Time", "Case Name", "Activity"];
-  const timesheetArray = getTimesheetArray();
+
   return (
     <div className="container">
       Currently loaded timesheet: {loadedDate || "Today"}
@@ -220,29 +199,7 @@ function TimeTracker() {
         Fetch timesheet for preceding date
       </button>
       <div>
-        <table>
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th>{col}</th>
-              ))}
-            </tr>
-          </thead>
-        </table>
-        {timesheetArray.map((row) => {
-          return (
-            <table>
-              <tbody>
-                <tr>
-                  <td>{row[0]}</td>
-                  <td>{row[1]}</td>
-                  <td>{row[2]}</td>
-                  <td>{row[3]}</td>
-                </tr>
-              </tbody>
-            </table>
-          );
-        })}
+        <TimeTable date={desiredDate} timesheet={todaysTimesheet} />
       </div>
     </div>
   );
