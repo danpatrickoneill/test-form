@@ -230,7 +230,7 @@ function TimeTracker() {
       <button id="notify" onClick={() => createNotification()}>
         Get notification right now
       </button>
-      <TimeTable date={desiredDate} timesheet={todaysTimesheet} />
+      <TimeTable date={loadedDate} timesheet={todaysTimesheet} />
     </div>
   );
 }

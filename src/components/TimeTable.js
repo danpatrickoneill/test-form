@@ -45,7 +45,7 @@ function TimeTable(props) {
         mx: { xs: "auto" , sm: 0},
       }}
     >
-      <h2>{date}</h2>
+      <h3>Timesheet for {date}</h3>
       <Table size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
