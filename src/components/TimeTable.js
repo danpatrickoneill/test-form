@@ -42,10 +42,10 @@ function TimeTable(props) {
           xs: "90%", // theme.breakpoints.up('sm')
           md: "50%", // theme.breakpoints.up('md')
         },
-        mx: { xs: "auto" , sm: 0},
+        mx: { xs: "auto", sm: 0 },
       }}
     >
-      <h3>Timesheet for {date}</h3>
+      {date.length ? <h3>Timesheet for {date}</h3> : null}
       <Table size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>

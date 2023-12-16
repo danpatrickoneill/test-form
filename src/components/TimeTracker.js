@@ -15,7 +15,7 @@ function TimeTracker() {
   const [activity, setActivity] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [desiredDate, setDesiredDate] = useState("");
-  const [loadedDate, setLoadedDate] = useState("None");
+  const [loadedDate, setLoadedDate] = useState("");
   // const [isFetching, setIsFetching] = useState(true);
 
   // useEffect(
