@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   GetObjectCommand,
   PutObjectCommand,
@@ -9,6 +9,7 @@ import "./index.css";
 
 function TimeTracker() {
   const [todaysTimesheet, setTodaysTimesheet] = useState("");
+  const [thisMonthsTimesheet, setThisMonthsTimesheet] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [caseName, setCaseName] = useState("");
@@ -18,17 +19,22 @@ function TimeTracker() {
   const [loadedDate, setLoadedDate] = useState("");
   // const [isFetching, setIsFetching] = useState(true);
 
-  // useEffect(
-  //   () => async () => {
-  //     if (isFetching) {
-  //       const test = await fetchSheetFromS3(desiredDate);
-  //       console.log(test);
-  //     }
-  //     setIsFetching(false);
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   []
-  // );
+  useEffect(
+    () => async () => {
+      if (todaysTimesheet.length) {
+        console.log(todaysTimesheet)
+        const dateString = `${2023}-${11 + 1}-${"TEST"}`;
+        const newSheet = `${dateString}\n` + todaysTimesheet;
+        console.log(newSheet);
+        console.log("HERE NOW");
+        setThisMonthsTimesheet(thisMonthsTimesheet + newSheet);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [todaysTimesheet]
+  );
+
+  let monthlySheet = "";
 
   function askNotificationPermission() {
     // function to actually ask the permissions
@@ -67,6 +73,7 @@ function TimeTracker() {
   };
 
   const fetchSheetFromS3 = async (dateString) => {
+    console.log(dateString);
     const dateForKey = dateString?.length
       ? new Date(`${dateString} 12:00`)
       : new Date();
@@ -90,8 +97,9 @@ function TimeTracker() {
       const getResponse = await client.send(getCommand);
       const str = await getResponse.Body.transformToString();
       setTodaysTimesheet(str);
-      console.log(str);
-      console.log("Timesheet loaded successfully");
+      monthlySheet += str;
+      monthlySheet += "\n";
+      // console.log("Timesheet loaded successfully");
       if (dateString.length) {
         setLoadedDate(dateString);
       } else {
@@ -99,8 +107,8 @@ function TimeTracker() {
       }
       return str;
     } catch (e) {
-      console.log(e);
-      console.log("No timesheet found for date");
+      // console.log(e);
+      // console.log("No timesheet found for date");
       window.alert(
         "No timesheet found for date; if you believe this is in error, contact the Danster"
       );
@@ -137,7 +145,7 @@ function TimeTracker() {
 
     try {
       const putResponse = await client.send(putCommand);
-      console.log(putResponse);
+      // console.log(putResponse);
       setTodaysTimesheet(newTimesheet);
     } catch (err) {
       console.error(err);
@@ -145,21 +153,49 @@ function TimeTracker() {
   };
 
   const fetchSheetForDate = async (date) => {
-    await fetchSheetFromS3(date);
+    return fetchSheetFromS3(date);
   };
 
+  function getDaysInMonth(month) {
+    const thirties = [3, 5, 8, 10];
+    const twentyEight = 1;
+    let days = 31;
+    if (month === twentyEight) {
+      days = 28;
+    } else if (thirties.includes(month)) {
+      days--;
+    }
+    return days;
+  }
+
+  async function fetchTimesheetsForMonth(month) {
+    // const monthRegex = new RegExp(`${month}.+SPO`);
+    const days = getDaysInMonth(month);
+    let date = 18;
+    while (date <= days) {
+      const currentYear = 2023;
+      const dateString = `${currentYear}-${month + 1}-${date}`;
+      const dailySheet = await fetchSheetForDate(dateString);
+      console.log(dailySheet);
+      console.log(thisMonthsTimesheet);
+      date++;
+    }
+  }
+
   const downloadCurrentTimesheet = () => {
-    console.log(todaysTimesheet);
-    if (!todaysTimesheet.length) {
+    console.log(185, todaysTimesheet, thisMonthsTimesheet);
+    if (!todaysTimesheet.length && !thisMonthsTimesheet.length) {
       return;
     }
     let csvContentForDownload = "data:text/csv;charset=utf-8,";
-    csvContentForDownload += todaysTimesheet;
+    csvContentForDownload += thisMonthsTimesheet.length
+      ? thisMonthsTimesheet
+      : todaysTimesheet;
     const dateToUse = loadedDate?.length
       ? new Date(`${loadedDate} 12:00`)
       : new Date();
     csvContentForDownload += "\n";
-    csvContentForDownload += dateToUse.toDateString();
+    csvContentForDownload += `Downloaded ${dateToUse.toDateString()}`;
     const encodedUri = encodeURI(csvContentForDownload);
     window.open(encodedUri);
   };
@@ -223,6 +259,9 @@ function TimeTracker() {
       </label>
       <button onClick={() => fetchSheetForDate(desiredDate)}>
         Fetch timesheet for preceding date
+      </button>
+      <button onClick={() => fetchTimesheetsForMonth(11)}>
+        Fetch timesheet for December
       </button>
       <button id="enable" onClick={() => askNotificationPermission()}>
         Enable notifications
