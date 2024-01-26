@@ -34,8 +34,6 @@ function TimeTracker() {
     [todaysTimesheet]
   );
 
-  // let monthlySheet = "";
-
   function askNotificationPermission() {
     // function to actually ask the permissions
     function handlePermission(permission) {
@@ -77,9 +75,8 @@ function TimeTracker() {
     const dateForKey = dateString?.length
       ? new Date(`${dateString} 12:00`)
       : new Date();
-    let timesheetKey = `${
-      dateForKey.getMonth() + 1
-    }${dateForKey.getDate()}${dateForKey.getFullYear()}_SPO.csv`;
+    let timesheetKey = `${dateForKey.getMonth() + 1
+      }${dateForKey.getDate()}${dateForKey.getFullYear()}_SPO.csv`;
 
     if (authCode !== "SPO") {
       window.alert("UNAUTHORIZED");
@@ -97,6 +94,7 @@ function TimeTracker() {
       const getResponse = await client.send(getCommand);
       const str = await getResponse.Body.transformToString();
       setTodaysTimesheet(str);
+      let monthlySheet = "";
       monthlySheet += str;
       monthlySheet += "\n";
       // console.log("Timesheet loaded successfully");
@@ -118,9 +116,8 @@ function TimeTracker() {
 
   const sendFileToS3 = async () => {
     const today = new Date();
-    const todaysTimesheetKey = `${
-      today.getMonth() + 1
-    }${today.getDate()}${today.getFullYear()}_SPO.csv`;
+    const todaysTimesheetKey = `${today.getMonth() + 1
+      }${today.getDate()}${today.getFullYear()}_SPO.csv`;
 
     if (authCode !== "SPO") {
       window.alert("UNAUTHORIZED");
