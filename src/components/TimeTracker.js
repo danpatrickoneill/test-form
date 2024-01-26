@@ -34,7 +34,7 @@ function TimeTracker() {
     [todaysTimesheet]
   );
 
-  let monthlySheet = "";
+  // let monthlySheet = "";
 
   function askNotificationPermission() {
     // function to actually ask the permissions
@@ -145,7 +145,7 @@ function TimeTracker() {
 
     try {
       const putResponse = await client.send(putCommand);
-      // console.log(putResponse);
+      console.log(putResponse);
       setTodaysTimesheet(newTimesheet);
     } catch (err) {
       console.error(err);
