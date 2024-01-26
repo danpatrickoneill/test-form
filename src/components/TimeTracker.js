@@ -75,9 +75,8 @@ function TimeTracker() {
     const dateForKey = dateString?.length
       ? new Date(`${dateString} 12:00`)
       : new Date();
-    let timesheetKey = `${dateForKey.getMonth() + 1
-      }${dateForKey.getDate()}${dateForKey.getFullYear()}_SPO.csv`;
-
+    let timesheetKey = `${dateForKey.getMonth() + 1}${dateForKey.getDate()}${dateForKey.getFullYear()}_SPO.csv`;
+    console.log(79, timesheetKey)
     if (authCode !== "SPO") {
       window.alert("UNAUTHORIZED");
       return;
@@ -94,11 +93,11 @@ function TimeTracker() {
       const getResponse = await client.send(getCommand);
       const str = await getResponse.Body.transformToString();
       setTodaysTimesheet(str);
-      let monthlySheet = "";
-      monthlySheet += str;
-      monthlySheet += "\n";
+      // let monthlySheet = "";
+      // monthlySheet += str;
+      // monthlySheet += "\n";
       // console.log("Timesheet loaded successfully");
-      if (dateString.length) {
+      if (dateString.length) {  
         setLoadedDate(dateString);
       } else {
         setLoadedDate("Today");
